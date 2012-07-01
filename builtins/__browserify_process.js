@@ -37,6 +37,9 @@ process.binding = function (name) {
     else throw new Error('No such module. (Possibly not yet loaded)')
 };
 
+process.stderr = process.stdout = require('fs').createWriteStream('stdout.log', {flags: 'a', mode: 0666});
+//process.stderr = require('fs').createWriteStream('stderr.log', {flags: 'a', mode: 0666});
+
 (function () {
     var cwd = '/';
     var path;
