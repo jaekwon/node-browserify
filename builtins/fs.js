@@ -3,17 +3,12 @@
 // global fs ref
 var _fs = null;
 
-function onInitFs(fs) {
-  console.log("opened fs "+fs);
-  _fs = fs;
-}
-
-function withFileSystem(onInitFs) {
+function withFileSystem(cb) {
   if (_fs) {
-    onInitFs(_fs);
+    cb(_fs);
   } else {
-    window.webkitStorageInfo.requestQuota(PERSISTENT, 1024*1024, function(grantedBytes) {
-      window.webkitRequestFileSystem(PERSISTENT, grantedBytes, onInitFs, errorHandler);
+    window.webkitStorageInfo.requestQuota(TEMPORARY, 1024*1024, function(grantedBytes) {
+      window.webkitRequestFileSystem(TEMPORARY, grantedBytes, function(fs) { _fs = fs; cb(fs); }, errorHandler);
     }, function(e) {
       errorHandler(e);
     });
@@ -29,6 +24,7 @@ function makeStreamAdapter() {
     if (enc != 'utf8') {
       throw new Error("FakeStream wants utf8");
     }
+    console.log('fs.write: '+str);
     writeBuffer.push(str);
   };
   // make it real
@@ -38,6 +34,7 @@ function makeStreamAdapter() {
       if (enc != 'utf8') {
         throw new Error("FakeStream wants utf8");
       }
+      console.log('fs.write: '+str);
       // blobs? are you for fucking real?
       var bb = new WebKitBlobBuilder();
       while (writeBuffer.length) {
@@ -61,9 +58,9 @@ exports.createWriteStream = function (path, options) {
     fs.root.getFile(path, {create:true}, function(fileEntry) {
       // Create a FileWriter object for our FileEntry
       fileEntry.createWriter(function(fileWriter) {
-        fileWriter.onwriteend = function(e) {
-          console.log('Write completed.');
-        };
+        //fileWriter.onwriteend = function(e) {
+        //  console.log('Write completed.');
+        //};
         fileWriter.onerror = function(e) {
           console.log('Write failed: ' + e.toString());
         };
