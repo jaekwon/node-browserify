@@ -6,26 +6,28 @@ var _fs = null;
 function withFileSystem(cb) {
   if (_fs) {
     cb(_fs);
-  } else {
+  } else if (window.webkitStorageInfo) {
     window.webkitStorageInfo.requestQuota(TEMPORARY, 1024*1024, function(grantedBytes) {
       window.webkitRequestFileSystem(TEMPORARY, grantedBytes, function(fs) { _fs = fs; cb(fs); }, errorHandler);
     }, function(e) {
       errorHandler(e);
     });
+  } else {
+    cb(null);
   };
 };
 
 // Return a fake writer synchronously.
 // You can use it like a node.js file write stream.
 function makeStreamAdapter() {
-  var writeBuffer = [];
   var fakeStream = {};
+  var writeBuffer = fakeStream.writeBuffer = [];
   fakeStream.write = function (str, enc) {
     if (enc != 'utf8') {
       throw new Error("FakeStream wants utf8");
     }
-    console.log('fs.write: '+str);
-    writeBuffer.push(str);
+    if (writeBuffer) writeBuffer.push(str);
+    else console.log(str);
   };
   // make it real
   fakeStream.realize = function (fileWriter) {
@@ -34,7 +36,6 @@ function makeStreamAdapter() {
       if (enc != 'utf8') {
         throw new Error("FakeStream wants utf8");
       }
-      console.log('fs.write: '+str);
       // blobs? are you for fucking real?
       var bb = new WebKitBlobBuilder();
       while (writeBuffer.length) {
@@ -54,6 +55,10 @@ function makeStreamAdapter() {
 exports.createWriteStream = function (path, options) {
   var fakeStream = makeStreamAdapter();
   withFileSystem(function(fs) {
+    if (!fs) {
+      fakeStream.writeBuffer = null;
+      return;
+    }
     // TODO handle options
     fs.root.getFile(path, {create:true}, function(fileEntry) {
       // Create a FileWriter object for our FileEntry
