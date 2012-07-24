@@ -1,0 +1,30 @@
+0 info it worked if it ends with ok
+1 verbose cli [ '/usr/local/bin/node', '/usr/local/bin/npm', 'link', '.' ]
+2 info using npm@1.1.36
+3 info using node@v0.8.2
+4 verbose config file /Users/jae/.npmrc
+5 verbose config file /usr/local/etc/npmrc
+6 verbose config file /usr/local/lib/node_modules/npm/npmrc
+7 verbose linkPkg /Users/jae/workspace/src/node-browserify
+8 verbose read json /Users/jae/workspace/src/node-browserify/package.json
+9 error Error: invalid version: 1.13.5.0
+9 error     at validVersion (/usr/local/lib/node_modules/npm/node_modules/read-package-json/read-json.js:510:40)
+9 error     at final (/usr/local/lib/node_modules/npm/node_modules/read-package-json/read-json.js:284:23)
+9 error     at /usr/local/lib/node_modules/npm/node_modules/read-package-json/read-json.js:115:33
+9 error     at cb (/usr/local/lib/node_modules/npm/node_modules/slide/lib/async-map.js:48:11)
+9 error     at /usr/local/lib/node_modules/npm/node_modules/read-package-json/read-json.js:236:40
+9 error     at fs.readFile (fs.js:176:14)
+9 error     at fs.close (/usr/local/lib/node_modules/npm/node_modules/graceful-fs/graceful-fs.js:94:5)
+9 error     at Object.oncomplete (fs.js:297:15)
+9 error  [Error: invalid version: 1.13.5.0]
+10 error You may report this log at:
+10 error     <http://github.com/isaacs/npm/issues>
+10 error or email it to:
+10 error     <npm-@googlegroups.com>
+11 error System Darwin 10.8.0
+12 error command "/usr/local/bin/node" "/usr/local/bin/npm" "link" "."
+13 error cwd /Users/jae/workspace/src/node-browserify
+14 error node -v v0.8.2
+15 error npm -v 1.1.36
+16 error message invalid version: 1.13.5.0
+17 verbose exit [ 1, true ]
